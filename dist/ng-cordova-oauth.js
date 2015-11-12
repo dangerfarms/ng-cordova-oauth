@@ -212,17 +212,17 @@ angular.module("oauth.providers", ["oauth.utils"])
                     var cordovaPluginList = cordova.require("cordova/plugin_list");
                     if($cordovaOauthUtility.isInAppBrowserInstalled(cordovaPluginList) === true) {
                         var redirect_uri = "http://localhost/callback";
-                        var responseType = "token";
+                        var response_type = "token";
                         if(options !== undefined) {
                             if(options.hasOwnProperty("redirect_uri")) {
                                 redirect_uri = options.redirect_uri;
                             }
-                            if(options.hasOwnProperty("responseType")) {
-                                responseType = options.responseType;
+                            if(options.hasOwnProperty("response_type")) {
+                                response_type = options.response_type;
                             }
                         }
-                        var urlSplitChar = (responseType === 'token') ? '#' : '?';
-                        var browserRef = window.open('https://accounts.google.com/o/oauth2/auth?client_id=' + clientId + '&redirect_uri=' + redirect_uri + '&scope=' + appScope.join(" ") + '&approval_prompt=force&response_type=' + responseType, '_blank', 'location=no,clearsessioncache=yes,clearcache=yes');
+                        var urlSplitChar = (response_type === 'token') ? '#' : '?';
+                        var browserRef = window.open('https://accounts.google.com/o/oauth2/auth?client_id=' + clientId + '&redirect_uri=' + redirect_uri + '&scope=' + appScope.join(" ") + '&approval_prompt=force&response_type=' + response_type, '_blank', 'location=no,clearsessioncache=yes,clearcache=yes');
                         browserRef.addEventListener("loadstart", function(event) {
                             if((event.url).indexOf(redirect_uri) === 0) {
                            		browserRef.removeEventListener("exit",function(event){});
@@ -233,9 +233,9 @@ angular.module("oauth.providers", ["oauth.utils"])
                                 for(var i = 0; i < responseParameters.length; i++) {
                                     parameterMap[responseParameters[i].split("=")[0]] = responseParameters[i].split("=")[1];
                                 }
-                                if(responseType === 'token' && parameterMap.access_token !== undefined && parameterMap.access_token !== null) {
+                                if(response_type === 'token' && parameterMap.access_token !== undefined && parameterMap.access_token !== null) {
                                     deferred.resolve({ access_token: parameterMap.access_token, token_type: parameterMap.token_type, expires_in: parameterMap.expires_in });
-                                } else if (responseType === 'code' && parameterMap.code !== undefined && parameterMap.code !== null) {
+                                } else if (response_type === 'code' && parameterMap.code !== undefined && parameterMap.code !== null) {
                                     deferred.resolve({ code: parameterMap.code });
                                 } else {
                                     deferred.reject("Problem authenticating");
