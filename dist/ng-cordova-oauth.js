@@ -2058,7 +2058,11 @@ angular.module("oauth.utils", [])
              * @return   boolean
              */
             isInAppBrowserInstalled: function(cordovaPluginList) {
-                var inAppBrowserNames = ["cordova-plugin-inappbrowser", "org.apache.cordova.inappbrowser"];
+                var inAppBrowserNames = [
+                    "cordova-plugin-inappbrowser.inappbrowser",
+                    "cordova-plugin-inappbrowser",
+                    "org.apache.cordova.inappbrowser"
+                ];
                 var matchFunction = function(plugin) {
                     return inAppBrowserNames.some(function(name) {return plugin.pluginId == name;});
                 };
