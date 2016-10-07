@@ -20,7 +20,8 @@
       if(window.cordova) {
         if($cordovaOauthUtility.isInAppBrowserInstalled()) {
           var redirect_uri = "http://localhost/callback";
-          var response_type = "token id_token";
+          var DEFAULT_RESPONSE_TYPE = "token id_token";
+          var response_type = DEFAULT_RESPONSE_TYPE;
           if(options !== undefined) {
             if(options.hasOwnProperty("redirect_uri")) {
               redirect_uri = options.redirect_uri;
@@ -29,7 +30,7 @@
               response_type = options.response_type;
             }
           }
-          var urlSplitChar = (response_type === 'token') ? '#' : '?';
+          var urlSplitChar = (response_type === DEFAULT_RESPONSE_TYPE) ? '#' : '?';
           var browserRef = window.cordova.InAppBrowser.open('https://accounts.google.com/o/oauth2/auth?client_id=' + clientId + '&redirect_uri=' + redirect_uri + '&scope=' + appScope.join(" ") + '&approval_prompt=force&response_type=' + response_type, '_blank', 'location=no,clearsessioncache=yes,clearcache=yes');
           browserRef.addEventListener("loadstart", function(event) {
             if((event.url).indexOf(redirect_uri) === 0) {
@@ -41,10 +42,12 @@
               for(var i = 0; i < responseParameters.length; i++) {
                 parameterMap[responseParameters[i].split("=")[0]] = responseParameters[i].split("=")[1];
               }
-              if(response_type === "token" && parameterMap.access_token !== undefined && parameterMap.access_token !== null) {
-                deferred.resolve({ access_token: parameterMap.access_token, token_type: parameterMap.token_type, expires_in: parameterMap.expires_in, id_token: parameterMap.id_token });
-              } else if (response_type === 'code' && parameterMap.code !== undefined && parameterMap.code !== null) {
+
+              if (parameterMap.code !== undefined && parameterMap.code !== null) {
                 deferred.resolve({ code: parameterMap.code });
+              }
+              else if(parameterMap.access_token !== undefined && parameterMap.access_token !== null) {
+                deferred.resolve({ access_token: parameterMap.access_token, token_type: parameterMap.token_type, expires_in: parameterMap.expires_in, id_token: parameterMap.id_token });
               } else {
                 deferred.reject("Problem authenticating");
               }
